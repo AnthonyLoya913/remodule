@@ -74,21 +74,46 @@ with c30:
 
     if uploaded_file is not None:
         file_container = st.expander("Check your uploaded .json or .txt file")
-        shows = pd.read_json(uploaded_file)
-        # shows = json.loads(uploaded_file.decode())
-        # df=pd.json_normalize(shows)
-        # df_list = []
-        # for col in df.columns:
-        #     if df[col].apply(type).eq(list).any():
-        #         df1 = df.explode(col, ignore_index=True)
-        #         df2 = pd.json_normalize(json.loads(df1.to_json(orient="records")))
-        #         df_list.append(df2)    
-        #         result = pd.concat(df_list)
-
-        #     if result.applymap(type).eq(list).any().any():
-        #         list_columns = result.applymap(type).eq(list).any().index[result.applymap(type).eq(list).any()].tolist()
-        #         result = result.drop(list_columns, axis=1)
-        #         result     
+        file_contents = uploaded_file.read()
+        file_contents_str = file_contents.decode("utf-8")
+        # shows = pd.read_json(uploaded_file)    
+        # uploaded_file.seek(0)
+        # file_container.write(shows)
+        if isinstance(file_contents_str, bytes):
+        # data is in bytes format, so it needs to be decoded
+            json_data = json.loads(file_contents_str.decode())
+        else:
+        # data is already in a string format, so it does not need to be decoded
+            json_data = json.loads(file_contents_str)
+        if isinstance(json_data, dict):
+        # data is in bytes format, so it needs to be decoded
+            df = pd.json_normalize(json_data)
+        else:
+        # data is already in a string format, so it does not need to be decoded
+            df = pd.read_json(file_contents_str)
+    # Initialize an empty list to store the exploded and normalized dataframes
+        df_list = []
+    # Iterate over the columns of the dataframe
+        for col in df.columns:
+    # Check if the column contains lists
+            if df[col].apply(type).eq(list).any():
+        # Explode the column
+                df1 = df.explode(col, ignore_index=True)
+        # Normalize the dataframe
+                df2 = pd.json_normalize(json.loads(df1.to_json(orient="records")))
+                df_list.append(df2)   
+                result = pd.concat(df_list) 
+            else:
+                result = df_list.append(df) 
+                result = pd.concat(df_list)
+    # Check if the dataframe contains any columns with dicts
+        if result.applymap(type).eq(list).any().any():
+    # Get the labels of the columns with dicts
+            list_columns = result.applymap(type).eq(list).any().index[result.applymap(type).eq(list).any()].tolist()
+            result = result.drop(list_columns, axis=1)   
+        else:
+            result
+        shows = result 
         uploaded_file.seek(0)
         file_container.write(shows)
 
