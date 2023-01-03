@@ -17,6 +17,7 @@ from functionforDownloadButtons import download_button
 
 ###################################
 
+STRIPE_CHECKOUT = 'https://buy.stripe.com/test_14k7uXbZFfgfdZS9AA'
 
 def _max_width_():
     max_width_str = f"max-width: 1800px;"
@@ -31,36 +32,12 @@ def _max_width_():
         unsafe_allow_html=True,
     )
 
-st.set_page_config(page_icon="✂️", page_title="Remodule")
-
-# st.image("https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/apple/285/balloon_1f388.png", width=100)
-
-st.title("JSON to CSV Converter")
-
-# st.caption(
-#     "PRD : TBC | Streamlit Ag-Grid from Pablo Fonseca: https://pypi.org/project/streamlit-aggrid/"
-# )
-
-
-# ModelType = st.radio(
-#     "Choose your model",
-#     ["Flair", "DistilBERT (Default)"],
-#     help="At present, you can choose between 2 models (Flair or DistilBERT) to embed your text. More to come!",
-# )
-
-# with st.expander("ToDo's", expanded=False):
-#     st.markdown(
-#         """
-# -   Add pandas.json_normalize() - https://streamlit.slack.com/archives/D02CQ5Z5GHG/p1633102204005500
-# -   **Remove 200 MB limit and test with larger CSVs**. Currently, the content is embedded in base64 format, so we may end up with a large HTML file for the browser to render
-# -   **Add an encoding selector** (to cater for a wider array of encoding types)
-# -   **Expand accepted file types** (currently only .csv can be imported. Could expand to .xlsx, .txt & more)
-# -   Add the ability to convert to pivot → filter → export wrangled output (Pablo is due to change AgGrid to allow export of pivoted/grouped data)
-# 	    """
-#     )
-# 
-#     st.text("")
-
+st.set_page_config(page_icon="https://i.imgur.com/y2i91bJ.png", page_title="Remodule")
+st.image(
+    "https://i.imgur.com/P7PyXuk.png",
+    width=100,
+)
+st.title("JSON to CSV Converter by Remodule")
 
 c29, c30, c31 = st.columns([1, 6, 1])
 
@@ -71,6 +48,9 @@ with c30:
         key="1",
         help="To activate 'wide mode', go to the hamburger menu > Settings > turn on 'wide mode'",
     )
+
+    # uploaded_file = st.text_input('Or copy and paste file here 👇')
+    # uploaded_file = st.write(uploaded_file)
 
     if uploaded_file is not None:
         file_container = st.expander("Check your uploaded .json or .txt file")
@@ -129,7 +109,6 @@ with c30:
 from st_aggrid import GridUpdateMode, DataReturnMode
 
 gb = GridOptionsBuilder.from_dataframe(shows)
-# enables pivoting on all columns, however i'd need to change ag grid to allow export of pivoted/grouped data, however it select/filters groups
 gb.configure_default_column(enablePivot=True, enableValue=True, enableRowGroup=True)
 gb.configure_column(shows.columns[0], headerCheckboxSelection=True)
 gb.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
@@ -146,21 +125,20 @@ st.success(
 response = AgGrid(
     shows,
     gridOptions=gridOptions,
-    enable_enterprise_modules=True,
+    enable_enterprise_modules=False,
     update_mode=GridUpdateMode.MODEL_CHANGED,
     data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
     fit_columns_on_grid_load=False,
+    allow_unsafe_jscode=True,
 )
 
 df = pd.DataFrame(response["selected_rows"])
 df = df.iloc[: , 1:]
-df1 = df
-df = df.head(10)
 
 st.subheader("Snapshot of filtered data will appear below 👇 ")
 st.text("")
 
-st.table(df)
+st.table(df.head(10))
 
 st.text("")
 
@@ -169,7 +147,7 @@ c29, c30, c31 = st.columns([1, 1, 2])
 with c29:
 
     CSVButton = download_button(
-        df1,
+        df,
         "File.csv",
         "Download to CSV",
     )
