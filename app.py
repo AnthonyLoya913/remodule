@@ -56,9 +56,7 @@ with c30:
         file_container = st.expander("Check your uploaded .json or .txt file")
         file_contents = uploaded_file.read()
         file_contents_str = file_contents.decode("utf-8")
-        # shows = pd.read_json(uploaded_file)    
-        # uploaded_file.seek(0)
-        # file_container.write(shows)
+        
         if isinstance(file_contents_str, bytes):
         # data is in bytes format, so it needs to be decoded
             json_data = json.loads(file_contents_str.decode())
@@ -74,6 +72,8 @@ with c30:
             
         # Create an empty list to store the dataframes
         df_list = []
+        cols = []
+        counts = {}
 
         if isinstance(json_data, list):
             # Normalize the data in the list
@@ -81,32 +81,43 @@ with c30:
             df_list.append(df)
 
         elif isinstance(json_data, dict):
-            # Iterate over each key-value pair in the data dictionary
-            for key, value in json_data.items():
-                # If the value is a list of lists, unnest it and create a dataframe
-                if isinstance(value, list) and all(isinstance(i, list) for i in value):
-                    df = pd.DataFrame(value, columns=[key,f'{key}_value'])
-                    df_list.append(df)
-                # If the value is a list of dictionaries, unnest it and create a dataframe
-                elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
-                    # Unnest the data in the 'totalDataChartBreakdown_value' column
-                    df = pd.json_normalize(value)
-                    # Merge the unnested data with the original dataframe
-                    df = pd.merge(df, pd.DataFrame(value, columns=[key, f'{key}_value']), on=key)
-                    df_list.append(df)
-                # If the value is not a list, create a dataframe with a single column and a default index
-                else:
-                    df = pd.DataFrame({key: value}, index=[0])
-                    df_list.append(df)
+          # Iterate over each key-value pair in the data dictionary
+          for key, value in json_data.items():
+              # If the value is a list of lists, unnest it and create a dataframe
+              if isinstance(value, list) and all(isinstance(i, list) for i in value):
+                  df = pd.DataFrame(value)
+                  df_list.append(df)
+              # If the value is a list of dictionaries, unnest it and create a dataframe
+              elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
+                  # Unnest the data in the 'totalDataChartBreakdown_value' column
+                  df = pd.json_normalize(value)
+                  # Merge the unnested data with the original dataframe
+                  df_list.append(df)
+              # If the value is not a list, create a dataframe with a single column and a default index
+              elif not isinstance(value, int):
+                  df = pd.DataFrame({key: value}, index=[0])
+                  df_list.append(df)
+
+                  # If the value is not a list, create a dataframe with a single column and a default index
+              else:
+                df = pd.DataFrame({key: value}, index=[0])
+                df_list.append(df)
 
         # Concatenate the dataframes into a single dataframe
         df = pd.concat(df_list, axis=1)
-
+        for column in df.columns:
+            if column in counts:
+                counts[column] += 1
+                cols.append(f'{column}_{counts[column]}')
+            else:
+                counts[column] = 1
+                cols.append(column)
+        df.columns = cols
+        df = df
         # Display the resulting dataframe
-        df1 = pd.json_normalize(json.loads(df.to_json(orient="records")))
-        shows = df1 
+        
         uploaded_file.seek(0)
-        file_container.write(shows)
+        file_container.write(df)
 
     else:
         st.info(
@@ -119,37 +130,37 @@ with c30:
 
 from st_aggrid import GridUpdateMode, DataReturnMode
 
-gb = GridOptionsBuilder.from_dataframe(shows)
-gb.configure_default_column(enablePivot=True, enableValue=True, enableRowGroup=True)
-gb.configure_column(shows.columns[0], headerCheckboxSelection=True)
-gb.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
-gb.configure_selection(selection_mode="multiple", use_checkbox=True)
-gb.configure_side_bar()  # side_bar is clearly a typo :) should by sidebar
-gridOptions = gb.build()
+# gb = GridOptionsBuilder.from_dataframe(df)
+# gb.configure_default_column(enablePivot=True, enableValue=True, enableRowGroup=True)
+# gb.configure_column(df.columns[0], headerCheckboxSelection=True)
+# gb.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
+# gb.configure_selection(selection_mode="multiple", use_checkbox=True)
+# gb.configure_side_bar()  # side_bar is clearly a typo :) should by sidebar
+# gridOptions = gb.build()
 
-st.success(
-    f"""
-        💡 Tip! Hold the shift key when selecting rows to select multiple rows at once!
-        """
-)
+# st.success(
+#     f"""
+#         💡 Tip! Hold the shift key when selecting rows to select multiple rows at once!
+#         """
+# )
 
-response = AgGrid(
-    shows,
-    gridOptions=gridOptions,
-    enable_enterprise_modules=False,
-    update_mode=GridUpdateMode.MODEL_CHANGED,
-    data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
-    fit_columns_on_grid_load=False,
-    allow_unsafe_jscode=True,
-)
+# response = AgGrid(
+#     df,
+#     gridOptions=gridOptions,
+#     enable_enterprise_modules=False,
+#     update_mode=GridUpdateMode.MODEL_CHANGED,
+#     data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
+#     fit_columns_on_grid_load=False,
+#     allow_unsafe_jscode=True,
+# )
 
-df = pd.DataFrame(response["selected_rows"])
+#  df = pd.DataFrame(response["selected_rows"])
 df = df.iloc[: , 1:]
 
 st.subheader("Snapshot of filtered data will appear below 👇 ")
 st.text("")
 
-st.table(df.head(10))
+st.table(df.head(5))
 
 st.text("")
 
