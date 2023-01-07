@@ -71,25 +71,33 @@ with c30:
         else:
         # data is already in a string format, so it does not need to be decoded
             df = pd.read_json(file_contents_str)
+            
         # Create an empty list to store the dataframes
         df_list = []
-        # Iterate over each key-value pair in the data dictionary
-        for key, value in json_data.items():
-            # If the value is a list of lists, unnest it and create a dataframe
-            if isinstance(value, list) and all(isinstance(i, list) for i in value):
-                df = pd.DataFrame(value, columns=[key, f'{key}_value'])
-                df_list.append(df)
-            # If the value is a list of dictionaries, unnest it and create a dataframe
-            elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
-                # Unnest the data in the 'totalDataChartBreakdown_value' column
-                df = pd.json_normalize(value)
-                # Merge the unnested data with the original dataframe
-                df = pd.merge(df, pd.DataFrame(value, columns=[key, f'{key}_value']), on=key)
-                df_list.append(df)
-            # If the value is not a list, create a dataframe with a single column and a default index
-            else:
-                df = pd.DataFrame({key: value}, index=[0])
-                df_list.append(df)
+
+        if isinstance(json_data, list):
+            # Normalize the data in the list
+            df = pd.json_normalize(json_data)
+            df_list.append(df)
+
+        elif isinstance(json_data, dict):
+            # Iterate over each key-value pair in the data dictionary
+            for key, value in json_data.items():
+                # If the value is a list of lists, unnest it and create a dataframe
+                if isinstance(value, list) and all(isinstance(i, list) for i in value):
+                    df = pd.DataFrame(value, columns=[key,f'{key}_value'])
+                    df_list.append(df)
+                # If the value is a list of dictionaries, unnest it and create a dataframe
+                elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
+                    # Unnest the data in the 'totalDataChartBreakdown_value' column
+                    df = pd.json_normalize(value)
+                    # Merge the unnested data with the original dataframe
+                    df = pd.merge(df, pd.DataFrame(value, columns=[key, f'{key}_value']), on=key)
+                    df_list.append(df)
+                # If the value is not a list, create a dataframe with a single column and a default index
+                else:
+                    df = pd.DataFrame({key: value}, index=[0])
+                    df_list.append(df)
 
         # Concatenate the dataframes into a single dataframe
         df = pd.concat(df_list, axis=1)
