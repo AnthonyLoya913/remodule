@@ -157,7 +157,7 @@ from st_aggrid import GridUpdateMode, DataReturnMode
 #  df = pd.DataFrame(response["selected_rows"])
 df = df.iloc[: , 1:]
 
-st.subheader("Snapshot of filtered data will appear below 👇 ")
+st.subheader("Snapshot of data will appear below 👇 ")
 st.text("")
 
 st.table(df.head(5))
