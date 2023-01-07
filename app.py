@@ -71,29 +71,32 @@ with c30:
         else:
         # data is already in a string format, so it does not need to be decoded
             df = pd.read_json(file_contents_str)
-    # Initialize an empty list to store the exploded and normalized dataframes
+        # Create an empty list to store the dataframes
         df_list = []
-    # Iterate over the columns of the dataframe
-        for col in df.columns:
-    # Check if the column contains lists
-            if df[col].apply(type).eq(list).any():
-        # Explode the column
-                df1 = df.explode(col, ignore_index=True)
-        # Normalize the dataframe
-                df2 = pd.json_normalize(json.loads(df1.to_json(orient="records")))
-                df_list.append(df2)   
-                result = pd.concat(df_list) 
+        # Iterate over each key-value pair in the data dictionary
+        for key, value in json_data.items():
+            # If the value is a list of lists, unnest it and create a dataframe
+            if isinstance(value, list) and all(isinstance(i, list) for i in value):
+                df = pd.DataFrame(value, columns=[key, f'{key}_value'])
+                df_list.append(df)
+            # If the value is a list of dictionaries, unnest it and create a dataframe
+            elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
+                # Unnest the data in the 'totalDataChartBreakdown_value' column
+                df = pd.json_normalize(value)
+                # Merge the unnested data with the original dataframe
+                df = pd.merge(df, pd.DataFrame(value, columns=[key, f'{key}_value']), on=key)
+                df_list.append(df)
+            # If the value is not a list, create a dataframe with a single column and a default index
             else:
-                result = df_list.append(df) 
-                result = pd.concat(df_list)
-    # Check if the dataframe contains any columns with dicts
-        if result.applymap(type).eq(list).any().any():
-    # Get the labels of the columns with dicts
-            list_columns = result.applymap(type).eq(list).any().index[result.applymap(type).eq(list).any()].tolist()
-            result = result.drop(list_columns, axis=1)   
-        else:
-            result
-        shows = result 
+                df = pd.DataFrame({key: value}, index=[0])
+                df_list.append(df)
+
+        # Concatenate the dataframes into a single dataframe
+        df = pd.concat(df_list, axis=1)
+
+        # Display the resulting dataframe
+        df1 = pd.json_normalize(json.loads(df.to_json(orient="records")))
+        shows = df1 
         uploaded_file.seek(0)
         file_container.write(shows)
 
