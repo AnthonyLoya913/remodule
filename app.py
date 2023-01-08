@@ -69,24 +69,52 @@ with c30:
         else:
         # data is already in a string format, so it does not need to be decoded
             df = pd.read_json(file_contents_str)
-            
-        # Create an empty list to store the dataframes
+
         df_list = []
         cols = []
         counts = {}
+
+        def flatten(data):
+            flat_data = {}
+            # Handling case where data is a list
+            if isinstance(data, list):
+                for element in data:
+                    if isinstance(element, dict):
+                        nested_data = flatten(element)
+                        for nested_key, nested_value in nested_data.items():
+                            flat_key = f"{nested_key}"
+                            flat_data[flat_key] = nested_value
+                    else:
+                        flat_data[key] = element
+            # Handling case where data is a dictionary
+            elif isinstance(data, dict):
+                for key, value in data.items():
+                    if isinstance(value, dict):
+                        nested_data = flatten(value)
+                        for nested_key, nested_value in nested_data.items():
+                            flat_key = f"{key}_{nested_key}"
+                            flat_data[flat_key] = nested_value
+                    elif isinstance(value, list):
+                        flat_data[key] = value
+                    else:
+                        flat_data[key] = value
+            return flat_data
+
+        # Flatten the JSON data
+        flattened_data = flatten(json_data)
 
         if isinstance(json_data, list):
             # Normalize the data in the list
             df = pd.json_normalize(json_data)
             df_list.append(df)
 
-        elif isinstance(json_data, dict):
-            for key, value in json_data.items():
+        elif isinstance(flattened_data, dict):
+            for key, value in flattened_data.items():
                 if isinstance(value, list) and all(isinstance(i, list) for i in value):
                     df = pd.DataFrame(value)
                     df_list.append(df)
                 elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
-                    df = pd.json_normalize(value)
+                    df = pd.json_normalize(value, errors='ignore')
                     df_list.append(df)
                 elif not isinstance(value, list):
                     df = pd.DataFrame({key: value}, index=[0])
@@ -96,7 +124,7 @@ with c30:
                     df_list.append(df)
 
         # Concatenate the dataframes into a single dataframe
-        df = pd.concat(df_list, axis=1)
+        df = pd.concat(df_list, axis=1, join='outer')
 
         for column in df.columns:
             if column in counts:
@@ -106,7 +134,7 @@ with c30:
                 counts[column] = 1
                 cols.append(column)
         df.columns = cols
-        df = pd.json_normalize(json.loads(df.to_json(orient="records")))
+        df = pd.json_normalize(json.loads(df.to_json(orient="records")), errors='ignore')
 
         # Display the resulting dataframe
         
