@@ -109,18 +109,19 @@ with c30:
             df_list.append(df)
 
         elif isinstance(flattened_data, dict):
-            for key, value in flattened_data.items():
+            for root_name, value in flattened_data.items():
                 if isinstance(value, list) and all(isinstance(i, list) for i in value):
                     df = pd.DataFrame(value)
+                    df.columns = [f'{root_name}_{i}' for i in range(len(df.columns))]  # rename the columns
                     df_list.append(df)
                 elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
                     df = pd.json_normalize(value, errors='ignore')
                     df_list.append(df)
                 elif not isinstance(value, list):
-                    df = pd.DataFrame({key: value}, index=[0])
+                    df = pd.DataFrame({root_name: value}, index=[0])
                     df_list.append(df)
                 else:
-                    df = pd.DataFrame({key: dict}, index=[0])
+                    df = pd.DataFrame({root_name: dict}, index=[0])
                     df_list.append(df)
 
         # Concatenate the dataframes into a single dataframe
