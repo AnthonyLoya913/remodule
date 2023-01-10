@@ -69,9 +69,11 @@ with c30:
         else:
         # data is already in a string format, so it does not need to be decoded
             df = pd.read_json(file_contents_str)
-
+            
         df_list = []
+        df_exp = []
         cols = []
+        columns_to_expand = []
         counts = {}
 
         def flatten(data):
@@ -99,6 +101,25 @@ with c30:
                     else:
                         flat_data[key] = value
             return flat_data
+
+        def get_columns_to_expand(df):
+            for column in df.columns:
+                if isinstance(df[column].iloc[0], (list, tuple)):
+                    columns_to_expand.append(column)
+            return columns_to_expand
+
+        def expand_columns(df):
+            columns_to_expand = get_columns_to_expand(df)
+            for column in columns_to_expand:
+                df_temp = df[column].apply(pd.Series)
+                if not df_temp.empty:
+                    df_temp.columns = ['{}_{}'.format(column, i) for i in range(len(df_temp.columns))]
+                    df_exp.append(df_temp)
+            if df_exp:
+                df_expanded = pd.concat(df_exp, axis=1)
+                return df_expanded
+            else:
+                return df
 
         # Flatten the JSON data
         flattened_data = flatten(json_data)
@@ -134,9 +155,15 @@ with c30:
             else:
                 counts[column] = 1
                 cols.append(column)
+                
         df.columns = cols
         df = pd.json_normalize(json.loads(df.to_json(orient="records")), errors='ignore')
-
+        df_expanded = expand_columns(df)
+        get_col = get_columns_to_expand(df)
+        df_drop = df.drop(get_col, axis=1, inplace=True)
+        df_merged = pd.concat([df, df_expanded], axis=1, join='inner')
+        df = df_merged
+        df = df.loc[:,~df.columns.duplicated()].copy()
         # Display the resulting dataframe
         
         uploaded_file.seek(0)
@@ -195,6 +222,6 @@ with c29:
 
     CSVButton = download_button(
         df,
-        "remodule.csv",
+        "File.csv",
         "Download to CSV",
     )
