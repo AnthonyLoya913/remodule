@@ -121,6 +121,14 @@ with c30:
             else:
                 return df
 
+        def get_json_columns_to_expand(df):
+            json_cols = [col for col in df.columns if df[col].apply(lambda x: type(x) == list and len(x)>0 and all(isinstance(i, dict) for i in x)).any()]
+            return json_cols[0] if json_cols else ''
+
+        def get_json_columns_to_drop(df):
+            json_cols = [col for col in df.columns if df[col].apply(lambda x: type(x) == list and len(x)>0 and all(isinstance(i, dict) for i in x)).any()]
+            return json_cols
+
         # Flatten the JSON data
         flattened_data = flatten(json_data)
 
@@ -164,6 +172,17 @@ with c30:
         df_merged = pd.concat([df, df_expanded], axis=1, join='inner')
         df = df_merged
         df = df.loc[:,~df.columns.duplicated()].copy()
+        col_json = get_json_columns_to_expand(df)
+        drop_json = get_json_columns_to_drop(df)
+        if col_json == '':
+            pass
+        else:
+            df1 = (df[col_json].apply(pd.Series).merge(df, left_index=True, right_index = True))
+            df_json = pd.json_normalize(json.loads(df1.to_json(orient="records")), errors='ignore')
+            df_json.drop(columns=drop_json, inplace=True)
+            df_json.dropna(how='all', axis=1, inplace=True)
+            df = df_json
+
         # Display the resulting dataframe
         
         uploaded_file.seek(0)
