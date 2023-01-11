@@ -141,7 +141,7 @@ with c30:
             for root_name, value in flattened_data.items():
                 if isinstance(value, list) and all(isinstance(i, list) for i in value):
                     df = pd.DataFrame(value)
-                    df.columns = [f'{root_name}_{i}' for i in range(len(df.columns))]  # rename the columns
+                    df.columns = [f'{root_name}.{i}' for i in range(len(df.columns))]  # rename the columns
                     df_list.append(df)
                 elif isinstance(value, list) and all(isinstance(i, dict) for i in value):
                     df = pd.json_normalize(value, errors='ignore')
