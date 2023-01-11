@@ -94,7 +94,7 @@ with c30:
                     if isinstance(value, dict):
                         nested_data = flatten(value)
                         for nested_key, nested_value in nested_data.items():
-                            flat_key = f"{key}_{nested_key}"
+                            flat_key = f"{key}.{nested_key}"
                             flat_data[flat_key] = nested_value
                     elif isinstance(value, list):
                         flat_data[key] = value
@@ -113,7 +113,7 @@ with c30:
             for column in columns_to_expand:
                 df_temp = df[column].apply(pd.Series)
                 if not df_temp.empty:
-                    df_temp.columns = ['{}_{}'.format(column, i) for i in range(len(df_temp.columns))]
+                    df_temp.columns = ['{}.{}'.format(column, i) for i in range(len(df_temp.columns))]
                     df_exp.append(df_temp)
             if df_exp:
                 df_expanded = pd.concat(df_exp, axis=1)
