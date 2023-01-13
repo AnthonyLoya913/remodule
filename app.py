@@ -1,4 +1,5 @@
 import streamlit as st
+import stripe
 import pandas as pd
 from glom import glom
 import requests
@@ -17,7 +18,7 @@ from functionforDownloadButtons import download_button
 
 ###################################
 
-STRIPE_CHECKOUT = 'https://buy.stripe.com/test_14k7uXbZFfgfdZS9AA'
+stripe.api_key = 'sk_test_51MJj4EEKVq034p44ta07zOSkllukZWT9MSYZP7e3js62Lxc06gAhLpc4fZ1m4sHMSEsgZmOa2WjWifUK32m5RQBM00PxzHrDR0'
 
 def _max_width_():
     max_width_str = f"max-width: 1800px;"
@@ -237,10 +238,52 @@ st.text("")
 
 c29, c30, c31 = st.columns([1, 1, 2])
 
-with c29:
+st.title('Enter payment info:')   
+number = st.text_input(label='Card Number', value='', key='number_input')
+exp_month = st.text_input(label='Expiration Month', value='', key='exp_month_input')
+exp_year = st.text_input(label='Expiration Year', value='', key='exp_year_input')
+cvc = st.text_input(label='CVC', value='', key='cvc_input')
 
-    CSVButton = download_button(
-        df,
-        "File.csv",
-        "Download to CSV",
-    )
+def handle_payment():
+        if not all([number, exp_month, exp_year, cvc]):
+            return False
+        try:
+            token = stripe.Token.create(
+                card={
+                    "number": number,
+                    "exp_month": exp_month,
+                    "exp_year": exp_year,
+                    "cvc": cvc
+                },
+            )
+        except stripe.error.InvalidRequestError as e:
+            st.error("Error: {}".format(e))
+            return False
+        except Exception as e:
+            st.error("Error: {}".format(e))
+            return False
+        try:
+            charge = stripe.Charge.create(
+                amount=500,  # charge amount in cents
+                currency='usd',
+                description='Dataframe Download',
+                source=token["id"],
+            )
+            
+            return True
+        except stripe.error.CardError as e:
+            st.error("Error: {}".format(e))
+            return False
+         
+with st.form(key='my_form'):
+    submit_button  = st.form_submit_button(label='Submit Payment', on_click=handle_payment)
+    if submit_button:
+        payment_success = handle_payment()
+        if payment_success:
+            st.success("Payment successful")
+            CSVButton = download_button(
+                df,
+                "Remodule_csv.csv",
+                "Download to CSV",
+                )
+                
