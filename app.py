@@ -241,13 +241,15 @@ c29, c30, c31 = st.columns([1, 1, 2])
 
 st.title('Enter payment info:')
 st.text('Files are $5.00 USD per download')   
+
+email = st.text_input(label='Email', value='', key='email_input')
 number = st.text_input(label='Card Number', value='', key='number_input')
 exp_month = st.text_input(label='Expiration Month', value='', key='exp_month_input')
 exp_year = st.text_input(label='Expiration Year', value='', key='exp_year_input')
 cvc = st.text_input(label='CVC', value='', key='cvc_input')
 
 def handle_payment():
-        if not all([number, exp_month, exp_year, cvc]):
+        if not all([number, exp_month, exp_year, cvc, email]):
             return False
         try:
             token = stripe.Token.create(
@@ -257,6 +259,7 @@ def handle_payment():
                     "exp_year": exp_year,
                     "cvc": cvc
                 },
+                email=email
             )
         except stripe.error.InvalidRequestError as e:
             st.error("Error: {}".format(e))
@@ -282,9 +285,9 @@ with st.form(key='my_form'):
     if submit_button:
         payment_success = handle_payment()
         if payment_success:
-            st.success("Payment successful")
+            st.success("Payment successful!")
             CSVButton = download_button(
                 df,
                 file_name.split(".")[0]+".csv",
                 "Download to CSV",
-                )              
+                )      
