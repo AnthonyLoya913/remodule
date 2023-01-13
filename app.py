@@ -283,7 +283,7 @@ with st.form(key='my_form'):
             st.success("Payment successful")
             CSVButton = download_button(
                 df,
-                "Remodule_csv.csv",
+                "remodule_csv.csv",
                 "Download to CSV",
                 )
                 
