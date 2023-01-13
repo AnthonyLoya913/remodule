@@ -56,6 +56,7 @@ with c30:
     if uploaded_file is not None:
         file_container = st.expander("Check your uploaded .json or .txt file")
         file_contents = uploaded_file.read()
+        file_name = uploaded_file.name
         file_contents_str = file_contents.decode("utf-8")
         
         if isinstance(file_contents_str, bytes):
@@ -283,7 +284,6 @@ with st.form(key='my_form'):
             st.success("Payment successful")
             CSVButton = download_button(
                 df,
-                "remodule_csv.csv",
+                file_name.split(".")[0]+".csv",
                 "Download to CSV",
-                )
-                
+                )              
