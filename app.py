@@ -239,7 +239,8 @@ st.text("")
 
 c29, c30, c31 = st.columns([1, 1, 2])
 
-st.title('Enter payment info:')   
+st.title('Enter payment info:')
+st.text('Files are $5.00 USD per download')   
 number = st.text_input(label='Card Number', value='', key='number_input')
 exp_month = st.text_input(label='Expiration Month', value='', key='exp_month_input')
 exp_year = st.text_input(label='Expiration Year', value='', key='exp_year_input')
