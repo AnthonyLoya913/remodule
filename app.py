@@ -193,7 +193,7 @@ with c30:
     else:
         st.info(
             f"""
-                👆 Upload a .json or .txt file first. Sample to try: [alipayobjects.json](https://gw.alipayobjects.com/os/bmw-prod/1d565782-dde4-4bb6-8946-ea6a38ccf184.json)
+                👆 Upload a .json or .txt file first. Sample to try: [lyra-fees.json](https://api.llama.fi/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyFees)
                 """
         )
 
