@@ -240,7 +240,7 @@ st.text("")
 c29, c30, c31 = st.columns([1, 1, 2])
 
 st.title('Enter payment info:')
-st.text('Files are $5.00 USD per download')   
+st.text('Files are $9.00 USD per download')   
 
 email = st.text_input(label='Email', value='', key='email_input')
 number = st.text_input(label='Card Number', value='', key='number_input')
@@ -269,7 +269,7 @@ def handle_payment():
             return False
         try:
             charge = stripe.Charge.create(
-                amount=500,  # charge amount in cents
+                amount=900,  # charge amount in cents
                 currency='usd',
                 description='CSV Download',
                 source=token["id"],
