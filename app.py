@@ -193,7 +193,7 @@ with c30:
     else:
         st.info(
             f"""
-                👆 Upload a .json or .txt file first. Sample to try: [lyra-fees.json](https://api.llama.fi/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyFees)
+                👆 Upload a .json or .txt file first. Sample to try via DefiLlama API: [fees.json](https://api.llama.fi/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyFees)
                 """
         )
 
