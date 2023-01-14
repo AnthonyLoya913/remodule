@@ -242,11 +242,16 @@ c29, c30, c31 = st.columns([1, 1, 2])
 st.title('Enter payment info:')
 st.text('Files are $5.00 USD per download')   
 
+# Store the initial value of widgets in session state
+if "visibility" not in st.session_state:
+    st.session_state.visibility = "visible"
+    st.session_state.disabled = False
+
 email = st.text_input(label='Email', value='', key='email_input')
-number = st.text_input(label='Card Number', value='', key='number_input')
-exp_month = st.text_input(label='Expiration Month', value='', key='exp_month_input')
-exp_year = st.text_input(label='Expiration Year', value='', key='exp_year_input')
-cvc = st.text_input(label='CVC', value='', key='cvc_input')
+number = st.text_input(label='Card Number', value='**** **** **** ****', key='number_input')
+exp_month = st.text_input(label='Expiration Month', value='**', key='exp_month_input')
+exp_year = st.text_input(label='Expiration Year', value='**', key='exp_year_input')
+cvc = st.text_input(label='CVC', value='***', key='cvc_input')
 
 def handle_payment():
         if not all([number, exp_month, exp_year, cvc, email]):
