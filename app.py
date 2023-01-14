@@ -271,7 +271,7 @@ def handle_payment():
             charge = stripe.Charge.create(
                 amount=500,  # charge amount in cents
                 currency='usd',
-                description='Dataframe Download',
+                description='CSV Download',
                 source=token["id"],
             )
             
