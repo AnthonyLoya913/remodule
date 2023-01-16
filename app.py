@@ -283,10 +283,10 @@ def handle_payment():
             # Saving the email to a CSV file
             data = {'email': [email]}
             df = pd.DataFrame(data)
-            df.to_csv('emails.csv', index=False)
+            df.to_csv('https://github.com/AnthonyLoya913/remodule/blob/main/emails.csv', index=False)
 
             # Download the CSV file
-            with open("emails.csv", "rb") as f:
+            with open("https://github.com/AnthonyLoya913/remodule/blob/main/emails.csv", "rb") as f:
                 return True
         except stripe.error.CardError as e:
             st.error("Error: {}".format(e))
