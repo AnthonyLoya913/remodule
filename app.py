@@ -287,13 +287,7 @@ def handle_payment():
             description='CSV Download',
             source=token["id"],
         )
-        if charge["status"] == "succeeded":
-            try:
-                emails.insert({"email": email})
-            except Exception as e:
-                st.error("Error inserting email: {}".format(e))
-                return False
-        return True
+        
     except stripe.error.CardError as e:
         st.error("Error: {}".format(e))
         return False
@@ -303,6 +297,7 @@ with st.form(key='my_form'):
     if submit_button:
         payment_success = handle_payment()
         if payment_success:
+            emails.insert({"email": email})
             st.success("Your payment of $5.00 USD was successful!")
             CSVButton = download_button(
                 df,
