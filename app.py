@@ -253,6 +253,22 @@ exp_month = st.text_input(label='Expiration Month', value='**', key='exp_month_i
 exp_year = st.text_input(label='Expiration Year', value='**', key='exp_year_input')
 cvc = st.text_input(label='CVC', value='***', key='cvc_input')
 
+import csv
+import subprocess
+
+# Write email data to CSV file
+with open('emails.csv', mode='w') as csv_file:
+    fieldnames = ['email']
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    writer.writeheader()
+    for email in email:
+        writer.writerow({'email': email})
+
+# Push updated CSV file to GitHub repository
+subprocess.run(['git', 'add', 'emails.csv'])
+subprocess.run(['git', 'commit', '-m', '"Add email data"'])
+subprocess.run(['git', 'push', 'origin', 'master'])
+
 def handle_payment():
         if not all([number, exp_month, exp_year, cvc, email]):
             return False
