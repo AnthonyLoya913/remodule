@@ -253,8 +253,21 @@ exp_month = st.text_input(label='Expiration Month', value='**', key='exp_month_i
 exp_year = st.text_input(label='Expiration Year', value='**', key='exp_year_input')
 cvc = st.text_input(label='CVC', value='***', key='cvc_input')
 
+# 1) pip install deta
+from deta import Deta
+
+# 2) initialize with a project key
+deta = Deta("b010f1vs_EG3yHoWib22swGdRWRBdRSDanD7qqGTD")
+
+# 3) create and use as many DBs as you want!
+emails = deta.Base("emails")
+
+emails.insert({
+    "email": email,
+})
+
 def handle_payment():
-        if not all([number, exp_month, exp_year, cvc, email]):
+        if not all([number, exp_month, exp_year, cvc]):
             return False
         try:
             token = stripe.Token.create(
@@ -263,8 +276,7 @@ def handle_payment():
                     "exp_month": exp_month,
                     "exp_year": exp_year,
                     "cvc": cvc
-                },
-                email=email
+                }
             )
         except stripe.error.InvalidRequestError as e:
             st.error("Error: {}".format(e))
