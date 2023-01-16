@@ -7,6 +7,7 @@ import json
 from pandas import json_normalize 
 import io
 from deta import Deta
+import re
 
 ###################################
 from st_aggrid import AgGrid
@@ -243,11 +244,6 @@ c29, c30, c31 = st.columns([1, 1, 2])
 st.title('Enter payment info:')
 st.text('Files are $5.00 USD per download')   
 
-# Store the initial value of widgets in session state
-if "visibility" not in st.session_state:
-    st.session_state.visibility = "visible"
-    st.session_state.disabled = False
-
 def is_valid_email(email):
     return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'+"", email)
 
@@ -264,44 +260,44 @@ exp_year = st.text_input(label='Expiration Year', value='**', key='exp_year_inpu
 cvc = st.text_input(label='CVC', value='***', key='cvc_input')
 
 deta = Deta("b010f1vs_EG3yHoWib22swGdRWRBdRSDanD7qqGTD")
-
 emails = deta.Base("emails")
 
-emails.insert({
-    "email": email,
-})
-
 def handle_payment():
-        if not all([number, exp_month, exp_year, cvc]):
-            return False
-        try:
-            token = stripe.Token.create(
-                card={
-                    "number": number,
-                    "exp_month": exp_month,
-                    "exp_year": exp_year,
-                    "cvc": cvc
-                }
-            )
-        except stripe.error.InvalidRequestError as e:
-            st.error("Error: {}".format(e))
-            return False
-        except Exception as e:
-            st.error("Error: {}".format(e))
-            return False
-        try:
-            charge = stripe.Charge.create(
-                amount=500,  # charge amount in cents
-                currency='usd',
-                description='CSV Download',
-                source=token["id"],
-            )
-            
-            return True
-        except stripe.error.CardError as e:
-            st.error("Error: {}".format(e))
-            return False
-         
+    if not all([email, number, exp_month, exp_year, cvc]):
+        return False
+    try:
+        token = stripe.Token.create(
+            card={
+                "number": number,
+                "exp_month": exp_month,
+                "exp_year": exp_year,
+                "cvc": cvc
+            }
+        )
+    except stripe.error.InvalidRequestError as e:
+        st.error("Error: {}".format(e))
+        return False
+    except Exception as e:
+        st.error("Error: {}".format(e))
+        return False
+    try:
+        charge = stripe.Charge.create(
+            amount=500,  # charge amount in cents
+            currency='usd',
+            description='CSV Download',
+            source=token["id"],
+        )
+        if charge["status"] == "succeeded":
+            try:
+                emails.insert({"email": email})
+            except Exception as e:
+                st.error("Error inserting email: {}".format(e))
+                return False
+        return True
+    except stripe.error.CardError as e:
+        st.error("Error: {}".format(e))
+        return False
+        
 with st.form(key='my_form'):
     submit_button  = st.form_submit_button(label='Submit Payment', on_click=handle_payment)
     if submit_button:
@@ -312,4 +308,4 @@ with st.form(key='my_form'):
                 df,
                 file_name.split(".")[0]+".csv",
                 "Download to CSV",
-                )      
+                )
