@@ -279,19 +279,12 @@ def handle_payment():
                 description='CSV Download',
                 source=token["id"],
             )
-
-            # Saving the email to a CSV file
-            data = {'email': [email]}
-            df = pd.DataFrame(data)
-            df.to_csv('emails.csv', index=False)
-
-            # Download the CSV file
-            with open("emails.csv", "rb") as f:
-                return True
+            
+            return True
         except stripe.error.CardError as e:
             st.error("Error: {}".format(e))
             return False
-
+         
 with st.form(key='my_form'):
     submit_button  = st.form_submit_button(label='Submit Payment', on_click=handle_payment)
     if submit_button:
