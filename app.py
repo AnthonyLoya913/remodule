@@ -297,7 +297,6 @@ with st.form(key='my_form'):
     if submit_button:
         payment_success = handle_payment()
         if payment_success:
-            emails.insert({"email": email})
             st.success("Your payment of $5.00 USD was successful!")
             CSVButton = download_button(
                 df,
