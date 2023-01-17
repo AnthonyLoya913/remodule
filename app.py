@@ -243,7 +243,7 @@ with c29:
 
     CSVButton = download_button(
         df,
-        "File.csv",
+        file_name.split(".")[0]+".csv",
         "Download to CSV",
     )
     
