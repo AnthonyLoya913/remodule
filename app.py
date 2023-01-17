@@ -251,7 +251,7 @@ with c29:
 
 st.markdown("""
 <a href="https://www.buymeacoffee.com/remodule">
-  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" width="150" height="40"/>
+  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" width="140" height="40"/>
 </a>
 """, unsafe_allow_html=True)
 
