@@ -252,7 +252,7 @@ with c29:
 button_html = """
 <style>
     .round-button {
-        border-radius: 15px;
+        border-radius: 5px;
     }
 </style>
 <a href="https://www.buymeacoffee.com/remodule">
