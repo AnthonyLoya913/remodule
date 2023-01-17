@@ -248,12 +248,18 @@ with c29:
         "File.csv",
         "Download to CSV",
     )
-
-st.markdown("""
+    
+button_html = """
+<style>
+    .round-button {
+        border-radius: 15px;
+    }
+</style>
 <a href="https://www.buymeacoffee.com/remodule">
-  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" width="140" height="40"/>
+    <img class="round-button" src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" width="140" height="40"/>
 </a>
-""", unsafe_allow_html=True)
+"""
+st.markdown(button_html, unsafe_allow_html=True)
 
 # def is_valid_email(email):
 #     return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'+"", email)
