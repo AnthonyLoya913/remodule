@@ -249,9 +249,13 @@ with c29:
         "Download to CSV",
     )
 
-# st.title('Enter payment info:')
-# st.text('Files are $5.00 USD per download')   
+st.text('Like what you see here? Buy me a coffee!)   
 
+st.markdown("""
+<a href="https://www.buymeacoffee.com/remodule">
+  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" width="150" height="50"/>
+</a>
+""", unsafe_allow_html=True)
 # def is_valid_email(email):
 #     return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'+"", email)
 
