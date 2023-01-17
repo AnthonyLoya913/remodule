@@ -225,9 +225,14 @@ response = AgGrid(
     allow_unsafe_jscode=True,
 )
 
+# df = pd.DataFrame(response["selected_rows"])
+# if '_selectedRowNodeInfo' in df.columns:
+#     df = df.drop(['_selectedRowNodeInfo'], axis=1)
+# df = df
+
 df = pd.DataFrame(response["selected_rows"])
-if '_selectedRowNodeInfo' in df.columns:
-    df = df.drop(['_selectedRowNodeInfo'], axis=1)
+if 'rowIndex' in df.columns:
+    df = df.drop(['rowIndex'], axis=1)
 df = df
 
 st.subheader("Snapshot of filtered data will appear below 👇 ")
