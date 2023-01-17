@@ -18,7 +18,7 @@ from functionforDownloadButtons import download_button
 
 ###################################
 
-stripe.api_key = 'sk_test_51MJj4EEKVq034p44ta07zOSkllukZWT9MSYZP7e3js62Lxc06gAhLpc4fZ1m4sHMSEsgZmOa2WjWifUK32m5RQBM00PxzHrDR0'
+# stripe.api_key = 'sk_test_51MJj4EEKVq034p44ta07zOSkllukZWT9MSYZP7e3js62Lxc06gAhLpc4fZ1m4sHMSEsgZmOa2WjWifUK32m5RQBM00PxzHrDR0'
 
 def _max_width_():
     max_width_str = f"max-width: 1800px;"
