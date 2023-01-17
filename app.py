@@ -249,8 +249,6 @@ with c29:
         "Download to CSV",
     )
 
-st.text('Like what you see here? Buy me a coffee!)   
-
 st.markdown("""
 <a href="https://www.buymeacoffee.com/remodule">
   <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" width="150" height="50"/>
