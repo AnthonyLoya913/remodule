@@ -251,9 +251,10 @@ with c29:
 
 st.markdown("""
 <a href="https://www.buymeacoffee.com/remodule">
-  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" width="150" height="50"/>
+  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" width="150" height="40"/>
 </a>
 """, unsafe_allow_html=True)
+
 # def is_valid_email(email):
 #     return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'+"", email)
 
