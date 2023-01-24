@@ -238,9 +238,9 @@ df = df
 st.subheader("Snapshot of filtered data will appear below 👇 ")
 st.text("")
 
-with st.spinner("Loading table..."):
-    st.table(df.head(5))
-st.write("Table loaded!", success=True)
+st.table(df.head(5))
+
+st.text("")
 
 c29, c30, c31 = st.columns([1, 1, 2])
 
