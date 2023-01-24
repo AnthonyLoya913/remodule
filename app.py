@@ -211,7 +211,7 @@ gridOptions = gb.build()
 
 st.success(
     f"""
-        💡 Tip! Hold the shift key when selecting rows to select multiple rows at once!
+        💡 Tip! You can check the top box to select all rows or hold the shift key when selecting rows to select multiple rows at once!
         """
 )
 
