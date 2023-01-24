@@ -240,7 +240,9 @@ st.text("")
 
 st.table(df.head(5))
 
-st.text("")
+st.empty()
+st.write("Loading CSV button...")
+st.empty()
 
 c29, c30, c31 = st.columns([1, 1, 2])
 
