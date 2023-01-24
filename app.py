@@ -238,8 +238,14 @@ df = df
 st.subheader("Snapshot of filtered data will appear below 👇 ")
 st.text("")
 
+@st.cache(suppress_st_warning=True)
+def load_table():
+    return df.head(5)
+
+table = load_table()
+
 with st.spinner("Loading table..."):
-    table = st.table(df.head(5))
+    st.table(table)
 st.write("Table loaded!", success=True)
 
 if table:
@@ -250,7 +256,7 @@ if table:
             file_name.split(".")[0]+".csv",
             "Download to CSV",
         )
-    
+        
 button_html = """
 <style>
     .round-button {
