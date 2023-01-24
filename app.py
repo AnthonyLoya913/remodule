@@ -238,27 +238,18 @@ df = df
 st.subheader("Snapshot of filtered data will appear below 👇 ")
 st.text("")
 
-@st.cache(suppress_st_warning=True)
-def load_table():
-    return df.head(5)
-
-table = load_table()
-
 with st.spinner("Loading table..."):
-    st.table(table)
+    st.table(df.head(5))
 st.write("Table loaded!", success=True)
 
-if table:
-    c29, c30, c31 = st.columns([1, 1, 2])
-    with c29:
-        @st.cache(suppress_st_warning=True)
-        def load_button():
-            return download_button(
-                df,
-                file_name.split(".")[0]+".csv",
-                "Download to CSV",
-            )
-        CSVButton = load_button()
+c29, c30, c31 = st.columns([1, 1, 2])
+
+with c29:
+    CSVButton = download_button(
+        df,
+        file_name.split(".")[0]+".csv",
+        "Download to CSV",
+    )
 
 button_html = """
 <style>
