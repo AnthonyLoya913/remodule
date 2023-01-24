@@ -240,10 +240,6 @@ st.text("")
 
 st.table(df.head(5))
 
-st.empty()
-st.write("Loading CSV...")
-st.empty()
-
 c29, c30, c31 = st.columns([1, 1, 2])
 
 with c29:
