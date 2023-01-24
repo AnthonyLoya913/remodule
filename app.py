@@ -239,17 +239,17 @@ st.subheader("Snapshot of filtered data will appear below 👇 ")
 st.text("")
 
 with st.spinner("Loading table..."):
-    st.table(df.head(5))
+    table = st.table(df.head(5))
 st.write("Table loaded!", success=True)
 
-c29, c30, c31 = st.columns([1, 1, 2])
-
-with c29:
-    CSVButton = download_button(
-        df,
-        file_name.split(".")[0]+".csv",
-        "Download to CSV",
-    )
+if table:
+    c29, c30, c31 = st.columns([1, 1, 2])
+    with c29:
+        CSVButton = download_button(
+            df,
+            file_name.split(".")[0]+".csv",
+            "Download to CSV",
+        )
     
 button_html = """
 <style>
