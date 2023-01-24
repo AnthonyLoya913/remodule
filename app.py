@@ -251,12 +251,15 @@ st.write("Table loaded!", success=True)
 if table:
     c29, c30, c31 = st.columns([1, 1, 2])
     with c29:
-        CSVButton = download_button(
-            df,
-            file_name.split(".")[0]+".csv",
-            "Download to CSV",
-        )
-        
+        @st.cache(suppress_st_warning=True)
+        def load_button():
+            return download_button(
+                df,
+                file_name.split(".")[0]+".csv",
+                "Download to CSV",
+            )
+        CSVButton = load_button()
+
 button_html = """
 <style>
     .round-button {
