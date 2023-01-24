@@ -242,14 +242,15 @@ st.table(df.head(5))
 
 st.text("")
 
-c29, c30, c31 = st.columns([1, 1, 2])
+if df.shape[0] > 0:
+    c29, c30, c31 = st.columns([1, 1, 2])
 
-with c29:
-    CSVButton = download_button(
-        df,
-        file_name.split(".")[0]+".csv",
-        "Download to CSV",
-    )
+    with c29:
+        CSVButton = download_button(
+            df,
+            file_name.split(".")[0]+".csv",
+            "Download to CSV",
+        )
 
 button_html = """
 <style>
