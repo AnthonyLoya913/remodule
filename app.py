@@ -238,12 +238,13 @@ df = df
 st.subheader("Snapshot of filtered data will appear below 👇 ")
 st.text("")
 
-st.table(df.head(5))
+with st.spinner("Loading table..."):
+    st.table(df.head(5))
+st.write("Table loaded!", success=True)
 
 c29, c30, c31 = st.columns([1, 1, 2])
 
 with c29:
-
     CSVButton = download_button(
         df,
         file_name.split(".")[0]+".csv",
