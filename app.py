@@ -263,6 +263,7 @@ button_html = """
 </a>
 """
 st.markdown(button_html, unsafe_allow_html=True)
+st.text("Contact info: anthony@remodule.io")
 
 # def is_valid_email(email):
 #     return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'+"", email)
